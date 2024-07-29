@@ -8,10 +8,10 @@ echo task1(['GoodBye', 'Word'], true);
 echo '<hr>';
 
 // Задание #2
-task2('+', 1, 2, 3, 5.2); //11.2
-task2('-', 1, 2, 3, 5.2); //-9.2
-task2('*', 1, 2, 3, 5.2); //31.2
-task2('/', 1, 2, 3, 5.2); //0.032051282051282
+task2('+', 1, 2, 'не число', 3, 5.2); //11.2
+task2('-', 1, 2, 'не число', 3, 5.2); //-9.2
+task2('*', 1, 2, 'не число', 3, 5.2); //31.2
+task2('/', 1, 2, 'не число', 3, '0', '5.2'); //0.032051282051282
 
 echo '<hr>';
 
@@ -21,6 +21,7 @@ task3( rand(5, 10), rand(5, 10) );
 echo '<hr>';
 
 // Задание #4
+date_default_timezone_set('Europe/Moscow');
 echo date('d.m.Y H:i') . "<br>";
 echo strtotime('24.02.2016 00:00:00') . "<br>";
 
@@ -44,11 +45,5 @@ if (!file_exists($file)) {
 
 }
 myReadFile($file);
-
-function myReadFile($fileName) {
-  $f = fopen($fileName, 'r');
-  echo fread($f, filesize($fileName));
-  fclose($f);
-}
 
 echo '<hr>';

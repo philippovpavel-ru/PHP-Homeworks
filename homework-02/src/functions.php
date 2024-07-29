@@ -3,15 +3,14 @@ function task1(array $strings, bool $return = false)
 {
   $result = '';
   foreach ($strings as $string) {
-    if ($return) {
-      $result .= "<p>$string</p>";
-    } else {
-      echo "<p>$string</p>";
-    }
+    $result .= "<p>$string</p>";
   }
+
   if ($return) {
     return $result;
   }
+
+  echo $result;
 }
 
 function task2(string $operation, ...$numbers)
@@ -20,18 +19,29 @@ function task2(string $operation, ...$numbers)
   $result = $firstNum;
 
   foreach ($numbers as $num) {
+    if ( ! is_numeric($num) ) {
+      continue;
+    }
+
     switch ($operation) {
       case '+':
-        $result += $num;
+        $result += (float)$num;
         break;
       case '-':
-        $result -= $num;
+        $result -= (float)$num;
         break;
       case '*':
-        $result *= $num;
+        $result *= (float)$num;
         break;
       case '/':
-        $result /= $num;
+        if ( $num == 0 ) {
+          break;
+        }
+
+        $result /= (float)$num;
+        break;
+      default:
+        $result = 'Недопустимая операция';
         break;
     }
   }
@@ -42,7 +52,8 @@ function task2(string $operation, ...$numbers)
 function task3(int $rows, int $columns)
 {
   if (func_num_args() !== 2) {
-    throw new InvalidArgumentException('function task3 требует два аргумента');
+    trigger_error('function task3 требует два аргумента');
+    return;
   }
 
   echo '<table border="1">';
@@ -55,4 +66,11 @@ function task3(int $rows, int $columns)
     echo '</tr>';
   }
   echo '</table>';
+}
+
+function myReadFile($fileName)
+{
+  $f = fopen($fileName, 'r');
+  echo fread($f, filesize($fileName));
+  fclose($f);
 }
