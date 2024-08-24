@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <style>
+        .block {
+            box-sizing: border-box;
+            max-width: 320px;
+            width: 100%;
+            padding: 15px 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: inline-block;
+        }
+
+        .block:not(:last-child) {
+            margin-right: 15px;
+        }
+
+        .block h3 {
+            margin-bottom: 30px;
+        }
+
+        .block form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            position: relative;
+        }
+
+        label .label {
+            position: absolute;
+            font-size: 12px;
+            top: -15px;
+            left: 0;
+            pointer-events: none;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #46468b;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <h3><?php echo $this->title; ?></h3>
+
+    <?php if (!$this->user): ?>
+        <div class="block">
+            <h3>Зарегистрироваться</h3>
+            <form action="/login/register" method="post">
+                <label>
+                    <span class="label">Login:</span>
+                    <input type="text" value="" name="name">
+                </label>
+
+                <label>
+                    <span class="label">Email:</span>
+                    <input type="text" value="" name="email">
+                </label>
+
+                <label>
+                    <span class="label">Password:</span>
+                    <input type="text" value="" name="password">
+                </label>
+
+                <label>
+                    <span class="label">Confirm Password:</span>
+                    <input type="text" value="" name="password_2">
+                </label>
+
+                <input type="submit" value="Зарегистрироваться">
+            </form>
+        </div>
+
+        <div class="block">
+            <h3>Войти</h3>
+            <form action="/login/auth" method="post">
+                <label>
+                    <span class="label">Email:</span>
+                    <input type="text" value="" name="email">
+                </label>
+
+                <label>
+                    <span class="label">Password:</span>
+                    <input type="text" value="" name="password">
+                </label>
+
+                <input type="submit" value="Войти">
+            </form>
+
+        </div>
+    <?php else: ?>
+        Вы вошли как <?php echo $user->getName(); ?>
+    <?php endif; ?>
+
+</body>
+</head>
+
+</html>

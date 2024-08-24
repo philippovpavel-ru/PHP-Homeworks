@@ -1,0 +1,19 @@
+<html>
+
+<head></head>
+
+<body>
+    <h3><?php echo $this->title; ?></h3>
+
+    <?php if ($this->users): ?>
+        <?php foreach ($this->users as $user): ?>
+            Пользователь ID: <?php echo $user->getId(); ?> с именем <?php echo $user->getName(); ?><br>
+        <?php endforeach; ?>
+    <?php else: ?>
+        Пользоватей нет
+    <?php endif; ?>
+
+</body>
+</head>
+
+</html>

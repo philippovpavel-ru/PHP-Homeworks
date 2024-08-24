@@ -1,0 +1,17 @@
+<html>
+
+<head></head>
+
+<body>
+    <h3><?php echo $this->title; ?></h3>
+
+    <?php if ($this->user): ?>
+        Пользователь ID: <?php echo $this->user->getId(); ?> с именем <?php echo $this->user->getName(); ?>
+    <?php else: ?>
+        Пользователь не найден
+    <?php endif; ?>
+
+</body>
+</head>
+
+</html>
