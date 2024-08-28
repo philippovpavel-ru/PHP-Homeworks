@@ -1,0 +1,228 @@
+<style>
+  h1 {
+    margin-top: 30px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 320px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 30px 15px;
+    background-color: #f9f9f9;
+  }
+
+
+  input:not([type="file"]),
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  label {
+    position: relative;
+  }
+
+  .label {
+    font-size: 12px;
+    position: absolute;
+    top: -15px;
+    left: 0;
+  }
+
+  input[type="button"] {
+    background-color: #46468b;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  input[type="button"]:hover {
+    opacity: 0.8;
+  }
+
+  .user-list--empty {
+    max-width: 320px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 320px;
+    width: 100%;
+  }
+  .user {
+    box-sizing: border-box;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .user .user-id {
+    font-size: 12px;
+    color: #ccc;
+  }
+
+  .user .user-actions-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user .user-actions-btns .save {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+
+  .user .user-actions-btns .remove {
+    background-color: #f00;
+    color: #fff;
+  }
+</style>
+
+<a href="/logout">Выйти</a>
+
+<h2>Добавить пользователя</h2>
+
+<form>
+  <label>
+    <span class="label">Имя:</span>
+    <input type="text" id="user_name">
+  </label>
+
+  <label>
+    <span class="label">Email:</span>
+    <input type="text" id="user_email">
+  </label>
+
+  <label>
+    <span class="label">Пароль:</span>
+    <input type="text" id="user_password">
+  </label>
+
+  <input type="button" value="Отправить" onclick="addUser();">
+
+  <div id="resp"></div>
+</form>
+
+<h1>Список пользователей:</h1>
+
+<?php if ($users = $this->users): ?>
+  <?php $current_user_id = $this->user->getId(); ?>
+
+  <div class="user-list">
+    <?php foreach ($users as $user): ?>
+      <?php
+      if ($user->getId() == $current_user_id) {
+        continue;
+      }
+      ?>
+      <div class="user" id="user_block_<?php echo $user->getId(); ?>">
+        <div class="user-id">ID: <?php echo $user->getId(); ?></div>
+
+        <label>
+          <span class="label">Имя:</span>
+          <input type="text" id="user_name_<?php echo $user->getId(); ?>" value="<?php echo htmlspecialchars($user->getName()); ?>">
+        </label>
+
+        <label>
+          <span class="label">Email:</span>
+          <input type="text" id="user_email_<?php echo $user->getId(); ?>" value="<?php echo htmlspecialchars($user->email); ?>">
+        </label>
+
+        <label>
+          <span class="label">Пароль:</span>
+          <input type="text" id="user_password_<?php echo $user->getId(); ?>">
+        </label>
+
+        <div class="user-actions-btns">
+          <input type="button" class="save" onclick="saveUser(<?php echo $user->getId(); ?>);" value="Сохранить">
+          <input type="button" class="remove" onclick="deleteUser(<?php echo $user->getId(); ?>);" value="Удалить">
+        </div>
+
+        <div id="resp_<?php echo $user->getId(); ?>"></div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php else: ?>
+  <div class="user-list--empty">пользователей пока нет</div>
+<?php endif; ?>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+  function saveUser(userId) {
+    $.post(
+      '/admin/saveUser', {
+        id: userId,
+        name: $('#user_name_' + userId).val(),
+        email: $('#user_email_' + userId).val(),
+        password: $('#user_password_' + userId).val(),
+      },
+      function(r) {
+        if (r.error) {
+          $('#resp_' + userId).html('<span style="color:red">' + r.error + '</span>');
+        } else {
+          $('#resp_' + userId).html('<span style="color:green">' + r.result + '</span>');
+        }
+      }
+    );
+  }
+
+  function deleteUser(userId) {
+    $.post(
+      '/admin/deleteUser', {
+        id: userId,
+      },
+      function(r) {
+        if (r.error) {
+          $('#resp_' + userId).html('<span style="color:red">' + r.error + '</span>');
+        } else {
+          $('#resp_' + userId).html('<span style="color:green">' + r.result + '</span>');
+          setTimeout(function() {
+            $('#user_block_' + userId).remove();
+          }, 500);
+        }
+      }
+    );
+  }
+
+  function addUser() {
+    $.post(
+      '/admin/addUser', {
+        name: $('#user_name').val(),
+        email: $('#user_email').val(),
+        password: $('#user_password').val(),
+      },
+      function(r) {
+        if (r.error) {
+          $('#resp').html('<span style="color:red">' + r.error + '</span>');
+        } else {
+          $('#resp').html('<span style="color:green">' + r.result + '</span>');
+          location.reload();
+        }
+      }
+    );
+  }
+</script>

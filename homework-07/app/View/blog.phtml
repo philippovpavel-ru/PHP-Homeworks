@@ -1,0 +1,185 @@
+<style>
+    h1 {
+        margin-top: 30px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 320px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 30px 15px;
+        background-color: #f9f9f9;
+    }
+
+
+    input:not([type="file"]),
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    label {
+        position: relative;
+    }
+
+    .label {
+        font-size: 12px;
+        position: absolute;
+        top: -15px;
+        left: 0;
+    }
+
+    input[type="submit"] {
+        background-color: #46468b;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        opacity: 0.8;
+    }
+
+    .message-list--empty {
+        max-width: 320px;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        padding: 15px;
+        font-size: 12px;
+        opacity: 0.5;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .message-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 320px;
+        width: 100%;
+    }
+
+    .message {
+        box-sizing: border-box;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .message .message-header {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .message .date {
+        color: #ccc;
+        font-size: 12px;
+    }
+
+    .message .author {
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .message .text {
+        font-style: italic;
+    }
+
+    .message .image,
+    .message img {
+        max-width: 100%;
+        width: auto;
+    }
+
+    .message .image {
+        margin-bottom: 10px;
+    }
+
+    .message .admin {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 12px;
+        opacity: 0.5;
+    }
+
+    .message .admin:hover {
+        opacity: 1;
+    }
+
+    .message .admin a {
+        color: red;
+    }
+</style>
+
+<a href="/logout">Выйти</a>
+
+<h1>Список сообщений:</h1>
+
+<form enctype="multipart/form-data" action="/blog/addMessage" method="post">
+    <label>
+        <span class="label">Добавить сообщение</span>
+        <textarea type="text" name="text"></textarea>
+    </label>
+
+    <label>
+        <span class="label">Изображение:</span>
+        <input type="file" name="image">
+    </label>
+
+    <input type="submit" value="Отправить">
+</form>
+
+<?php if ($messages = $this->messages): ?>
+    <div class="message-list">
+        <?php foreach ($messages as $message): ?>
+            <div class="message">
+                <?php if ($this->user->isAdmin()): ?>
+                    <div class="admin">
+                        <a href="/admin/deleteMessage/?id=<?php echo $message->getId(); ?>">delete</a>
+                    </div>
+                <?php endif; ?>
+
+                <div class="message-header">
+                    <?php if ($author = $message->getAuthor()): ?>
+                        <span class="author">
+                            <?php echo htmlspecialchars($author->getName()); ?>
+                        </span>
+                    <?php else: ?>
+                        <span class="author">Сообщение от удаленного пользователя</span>
+                    <?php endif; ?>
+
+                    <span class="date">
+                        <?php echo $message->getCreatedAt(); ?>
+                    </span>
+                </div>
+
+                <?php if ($message->getImage()): ?>
+                    <div class="image">
+                        <img src="/images/<?php echo $message->getImage(); ?>">
+                    </div>
+                <?php endif; ?>
+
+                <div class="text">
+                    <?php echo nl2br(htmlspecialchars($message->getText())); ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php else: ?>
+    <div class="message-list--empty">Сообщений пока нет</div>
+<?php endif; ?>
